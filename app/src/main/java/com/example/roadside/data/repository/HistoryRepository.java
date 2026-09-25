@@ -18,6 +18,6 @@ public class HistoryRepository {
     }
 
     public List<Request> getHistory(int userId) {
-        return requestDao.getRequestsByUserId(userId);
+        return requestDao.getSyncRequestsByUserId(userId);
     }
 }

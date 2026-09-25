@@ -22,11 +22,11 @@ public class RequestRepository {
     }
 
     public Request getRequestById(int id) {
-        return requestDao.getRequestById(id);
+        return requestDao.getSyncRequestById(id);
     }
 
     public List<Request> getRequestsForUser(int userId) {
-        return requestDao.getRequestsByUserId(userId);
+        return requestDao.getSyncRequestsByUserId(userId);
     }
 
     public void updateRequest(Request request) {
