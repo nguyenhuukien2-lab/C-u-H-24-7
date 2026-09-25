@@ -1,0 +1,11 @@
+{
+    "name": "Cứu Hộ 247",
+    "short_name": "ResQ247",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#F5F7FA",
+    "theme_color": "#E53935",
+    "description": "Cứu Hộ 247 (ResQ247) cross-platform mobile app",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}
