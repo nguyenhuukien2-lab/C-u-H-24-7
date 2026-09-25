@@ -62,7 +62,7 @@ class TrackingScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.between,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
                         Text('Trạng thái cứu hộ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1A202C))),
                         Text('Dự kiến: 5 phút', style: TextStyle(color: Color(0xFFE53935), fontWeight: FontWeight.bold)),

@@ -159,7 +159,7 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
                             ),
                             const SizedBox(height: 12),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.between,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   provider['price'],

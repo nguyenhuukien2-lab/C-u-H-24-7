@@ -120,7 +120,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget _costRow(String label, String amount, {bool isTotal = false}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.between,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,

@@ -68,7 +68,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Đánh giá chuyến cứu hộ gần nhất',
@@ -150,7 +150,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(item['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF1A202C))),
                       Container(
@@ -170,7 +170,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   Text(item['provider'], style: const TextStyle(fontSize: 13, color: Color(0xFF4A5568))),
                   const SizedBox(height: 4),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(item['date'], style: const TextStyle(fontSize: 12, color: Color(0xFF718096))),
                       Text(item['cost'], style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFE53935), fontSize: 15)),
