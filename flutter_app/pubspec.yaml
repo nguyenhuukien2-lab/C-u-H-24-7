@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_fonts: ^6.1.0
   flutter_rating_bar: ^4.0.1
   cupertino_icons: ^1.0.6
 

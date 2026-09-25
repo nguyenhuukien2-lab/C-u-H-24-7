@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
@@ -31,7 +30,6 @@ class CuuHoApp extends StatelessWidget {
           surface: Colors.white,
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F7FA),
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF2D3748),
@@ -39,7 +37,7 @@ class CuuHoApp extends StatelessWidget {
           centerTitle: true,
         ),
       ),
-      initialRoute: '/login',
+      initialRoute: '/home',
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
