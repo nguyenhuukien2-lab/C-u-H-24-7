@@ -2,50 +2,82 @@ package com.example.roadside.data.repository;
 
 import android.content.Context;
 
+import com.example.roadside.data.api.ApiClient;
+import com.example.roadside.data.api.ApiService;
 import com.example.roadside.data.db.AppDatabase;
-import com.example.roadside.data.db.UserDao;
 import com.example.roadside.data.models.User;
 import com.example.roadside.utils.SharedPrefsHelper;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+/** Handles OTP login/registration and session persistence for LoginActivity / AuthViewModel. */
 public class AuthRepository {
 
-    private final UserDao userDao;
-    private final SharedPrefsHelper prefsHelper;
+    public interface AuthCallback<T> {
+        void onSuccess(T result);
+        void onError(String message);
+    }
+
+    private final ApiService apiService;
+    private final AppDatabase database;
+    private final SharedPrefsHelper prefs;
 
     public AuthRepository(Context context) {
-        AppDatabase db = AppDatabase.getInstance(context);
-        userDao = db.userDao();
-        prefsHelper = new SharedPrefsHelper(context);
+        this.apiService = ApiClient.getApiService();
+        this.database = AppDatabase.getInstance(context);
+        this.prefs = new SharedPrefsHelper(context);
     }
 
-    public boolean login(String email, String password) {
-        User user = userDao.login(email, password);
-        if (user != null) {
-            prefsHelper.saveUserSession(user.getId(), user.getEmail(), user.getName());
-            return true;
-        }
-        return false;
+    public void requestOtp(String phoneNumber, AuthCallback<Void> callback) {
+        String body = "{\"phoneNumber\":\"" + phoneNumber + "\"}";
+        apiService.requestOtp(body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    callback.onError("Không thể gửi mã OTP. Vui lòng thử lại.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
     }
 
-    public boolean register(User user) {
-        User existing = userDao.getUserByEmail(user.getEmail());
-        if (existing != null) {
-            return false;
-        }
-        long id = userDao.insert(user);
-        if (id > 0) {
-            user.setId((int) id);
-            prefsHelper.saveUserSession(user.getId(), user.getEmail(), user.getName());
-            return true;
-        }
-        return false;
+    public void verifyOtp(String phoneNumber, String otpCode, AuthCallback<User> callback) {
+        String body = "{\"phoneNumber\":\"" + phoneNumber + "\",\"otp\":\"" + otpCode + "\"}";
+        apiService.verifyOtp(body).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    prefs.saveUserId(user.getId());
+                    prefs.savePhoneNumber(user.getPhoneNumber());
+                    new Thread(() -> database.userDao().insert(user)).start();
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("Mã OTP không chính xác.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
     }
 
     public boolean isLoggedIn() {
-        return prefsHelper.isLoggedIn();
+        return prefs.isLoggedIn();
     }
 
     public void logout() {
-        prefsHelper.clearSession();
+        prefs.clearSession();
+        new Thread(() -> database.userDao().clear()).start();
     }
 }

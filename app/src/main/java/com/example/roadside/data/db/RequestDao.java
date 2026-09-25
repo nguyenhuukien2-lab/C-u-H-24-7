@@ -23,21 +23,12 @@ public interface RequestDao {
     @Query("SELECT * FROM requests WHERE id = :requestId LIMIT 1")
     LiveData<Request> getRequest(String requestId);
 
-    @Query("SELECT * FROM requests WHERE id = :requestId LIMIT 1")
-    LiveData<Request> getRequestById(int requestId);
-
-    @Query("SELECT * FROM requests WHERE id = :requestId LIMIT 1")
-    Request getSyncRequestById(int requestId);
-
     @Query("SELECT * FROM requests ORDER BY createdAt DESC")
     LiveData<List<Request>> getAllRequests();
 
     @Query("SELECT * FROM requests WHERE status = :status ORDER BY createdAt DESC")
-    LiveData<List<Request>> getRequestsByStatus(String status);
+    LiveData<List<Request>> getRequestsByStatus(Request.Status status);
 
-    @Query("SELECT * FROM requests WHERE userId = :userId ORDER BY createdAt DESC")
-    LiveData<List<Request>> getRequestsByUserId(int userId);
-
-    @Query("SELECT * FROM requests WHERE userId = :userId ORDER BY createdAt DESC")
-    List<Request> getSyncRequestsByUserId(int userId);
+    @Query("DELETE FROM requests")
+    void clear();
 }

@@ -4,76 +4,70 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.roadside.R;
 import com.example.roadside.data.models.Request;
-import com.example.roadside.utils.PaymentHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+/** Binds completed Request rows to item_request.xml in HistoryActivity. */
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
-    private List<Request> requestList = new ArrayList<>();
+    private final List<Request> requests = new ArrayList<>();
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    public void setRequests(List<Request> requests) {
-        this.requestList = requests != null ? requests : new ArrayList<>();
+    public void submitList(List<Request> newRequests) {
+        requests.clear();
+        if (newRequests != null) {
+            requests.addAll(newRequests);
+        }
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_request, parent, false);
-        return new ViewHolder(view);
+    public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_request, parent, false);
+        return new HistoryViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Request request = requestList.get(position);
-        if (holder.tvRequestService != null) {
-            holder.tvRequestService.setText(request.getServiceType());
-        }
-        if (holder.tvRequestDate != null) {
-            holder.tvRequestDate.setText("Mã YC: #" + request.getId());
-        }
-        if (holder.tvRequestStatus != null) {
-            holder.tvRequestStatus.setText(request.getStatus());
-        }
-        if (holder.tvRequestCost != null) {
-            holder.tvRequestCost.setText(PaymentHelper.formatCurrency(request.getCost()));
-        }
-        if (holder.btnRebook != null) {
-            holder.btnRebook.setOnClickListener(v -> Toast.makeText(v.getContext(), "Đặt lại dịch vụ thành công!", Toast.LENGTH_SHORT).show());
-        }
-        if (holder.btnInvoice != null) {
-            holder.btnInvoice.setOnClickListener(v -> Toast.makeText(v.getContext(), "Đang tải hóa đơn điện tử...", Toast.LENGTH_SHORT).show());
-        }
+    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
+        Request request = requests.get(position);
+        holder.tvService.setText(request.getIssueType());
+        holder.tvDate.setText(dateFormat.format(new Date(request.getCreatedAt())));
+        holder.tvVehicle.setText(request.getVehicleModel() + " • " + request.getPlateNumber());
+        holder.tvLocation.setText("📍 " + request.getAddress());
+        holder.tvStatus.setText(request.getStatus() == Request.Status.CANCELLED ? "✕ Đã hủy" : "✓ Đã xong");
     }
 
     @Override
     public int getItemCount() {
-        return requestList.size();
+        return requests.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRequestService, tvRequestDate, tvRequestStatus, tvRequestVehicle, tvRequestLocation, tvRequestCost, tvRequestRating, btnInvoice, btnRebook;
+    static class HistoryViewHolder extends RecyclerView.ViewHolder {
+        final TextView tvService;
+        final TextView tvDate;
+        final TextView tvVehicle;
+        final TextView tvLocation;
+        final TextView tvStatus;
 
-        public ViewHolder(@NonNull View itemView) {
+        HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvRequestService = itemView.findViewById(R.id.tvRequestService);
-            tvRequestDate = itemView.findViewById(R.id.tvRequestDate);
-            tvRequestStatus = itemView.findViewById(R.id.tvRequestStatus);
-            tvRequestVehicle = itemView.findViewById(R.id.tvRequestVehicle);
-            tvRequestLocation = itemView.findViewById(R.id.tvRequestLocation);
-            tvRequestCost = itemView.findViewById(R.id.tvRequestCost);
-            tvRequestRating = itemView.findViewById(R.id.tvRequestRating);
-            btnInvoice = itemView.findViewById(R.id.btnEInvoice);
-            btnRebook = itemView.findViewById(R.id.btnRebookProvider);
+            tvService = itemView.findViewById(R.id.tvRequestService);
+            tvDate = itemView.findViewById(R.id.tvRequestDate);
+            tvVehicle = itemView.findViewById(R.id.tvRequestVehicle);
+            tvLocation = itemView.findViewById(R.id.tvRequestLocation);
+            tvStatus = itemView.findViewById(R.id.tvRequestStatus);
         }
     }
 }

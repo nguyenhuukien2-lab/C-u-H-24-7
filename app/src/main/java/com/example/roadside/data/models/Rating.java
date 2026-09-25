@@ -1,44 +1,40 @@
 package com.example.roadside.data.models;
 
+import java.util.List;
+
 public class Rating {
-    private int id;
-    private int requestId;
-    private int providerId;
-    private int userId;
-    private float ratingValue;
-    private String reviewComment;
-    private String timestamp;
+    private String id;
+    private String requestId;
+    private String providerId;
+    private int stars;
+    private List<String> highlightTags;
+    private String comment;
+    private String receiptPhotoUrl;
+    private long submittedAt;
 
-    public Rating() {}
+    public Rating() { }
 
-    public Rating(int id, int requestId, int providerId, int userId, float ratingValue, String reviewComment, String timestamp) {
-        this.id = id;
-        this.requestId = requestId;
-        this.providerId = providerId;
-        this.userId = userId;
-        this.ratingValue = ratingValue;
-        this.reviewComment = reviewComment;
-        this.timestamp = timestamp;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getRequestId() { return requestId; }
+    public void setRequestId(String requestId) { this.requestId = requestId; }
 
-    public int getRequestId() { return requestId; }
-    public void setRequestId(int requestId) { this.requestId = requestId; }
+    public String getProviderId() { return providerId; }
+    public void setProviderId(String providerId) { this.providerId = providerId; }
 
-    public int getProviderId() { return providerId; }
-    public void setProviderId(int providerId) { this.providerId = providerId; }
+    public int getStars() { return stars; }
+    public void setStars(int stars) { this.stars = stars; }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public List<String> getHighlightTags() { return highlightTags; }
+    public void setHighlightTags(List<String> highlightTags) { this.highlightTags = highlightTags; }
 
-    public float getRatingValue() { return ratingValue; }
-    public void setRatingValue(float ratingValue) { this.ratingValue = ratingValue; }
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
 
-    public String getReviewComment() { return reviewComment; }
-    public void setReviewComment(String reviewComment) { this.reviewComment = reviewComment; }
+    public String getReceiptPhotoUrl() { return receiptPhotoUrl; }
+    public void setReceiptPhotoUrl(String receiptPhotoUrl) { this.receiptPhotoUrl = receiptPhotoUrl; }
 
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public long getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(long submittedAt) { this.submittedAt = submittedAt; }
 }

@@ -1,19 +1,60 @@
 package com.example.roadside.utils;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+/**
+ * Wraps FusedLocationProviderClient so activities can request the customer's
+ * live GPS position for the SOS button and request-form map preview.
+ */
 public class LocationHelper {
 
-    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double earthRadius = 6371; // in kilometers
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return earthRadius * c;
+    public interface LocationCallback {
+        void onLocationResult(double latitude, double longitude);
+        void onLocationUnavailable();
     }
 
-    public static String formatDistance(double distanceKm) {
-        return String.format("%.1f km", distanceKm);
+    private final FusedLocationProviderClient fusedLocationClient;
+
+    public LocationHelper(Context context) {
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+    }
+
+    public boolean hasLocationPermission(Context context) {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void requestLocationPermission(Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                Constants.REQUEST_CODE_LOCATION_PERMISSION);
+    }
+
+    @SuppressWarnings("MissingPermission")
+    public void getCurrentLocation(Context context, LocationCallback callback) {
+        if (!hasLocationPermission(context)) {
+            callback.onLocationUnavailable();
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener((OnSuccessListener<Location>) location -> {
+                    if (location != null) {
+                        callback.onLocationResult(location.getLatitude(), location.getLongitude());
+                    } else {
+                        callback.onLocationUnavailable();
+                    }
+                })
+                .addOnFailureListener(e -> callback.onLocationUnavailable());
     }
 }

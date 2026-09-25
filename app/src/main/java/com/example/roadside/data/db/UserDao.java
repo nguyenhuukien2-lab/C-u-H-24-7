@@ -10,8 +10,6 @@ import androidx.room.Update;
 
 import com.example.roadside.data.models.User;
 
-import java.util.List;
-
 @Dao
 public interface UserDao {
 
@@ -27,14 +25,8 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     LiveData<User> getUser(String userId);
 
-    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
-    User getUserById(int userId);
-
-    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
-    User getUserByEmail(String email);
-
-    @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
-    User login(String email, String password);
+    @Query("SELECT * FROM users WHERE phoneNumber = :phone LIMIT 1")
+    User getUserByPhone(String phone);
 
     @Query("SELECT * FROM users LIMIT 1")
     LiveData<User> getCurrentUser();

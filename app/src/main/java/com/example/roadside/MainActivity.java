@@ -9,19 +9,16 @@ import com.example.roadside.ui.auth.LoginActivity;
 import com.example.roadside.ui.home.HomeActivity;
 import com.example.roadside.utils.SharedPrefsHelper;
 
+/** Launcher activity: routes straight to Home if a session exists, else Login. */
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        SharedPrefsHelper prefsHelper = new SharedPrefsHelper(this);
-        if (prefsHelper.isLoggedIn()) {
-            startActivity(new Intent(this, HomeActivity.class));
-        } else {
-            startActivity(new Intent(this, LoginActivity.class));
-        }
+        boolean loggedIn = new SharedPrefsHelper(this).isLoggedIn();
+        Intent intent = new Intent(this, loggedIn ? HomeActivity.class : LoginActivity.class);
+        startActivity(intent);
         finish();
     }
 }

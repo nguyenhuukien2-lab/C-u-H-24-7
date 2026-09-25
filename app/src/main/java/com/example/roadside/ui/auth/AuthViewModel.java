@@ -10,41 +10,61 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.roadside.data.models.User;
 import com.example.roadside.data.repository.AuthRepository;
 
+/** Backs LoginActivity/RegisterActivity: OTP request/verify state. */
 public class AuthViewModel extends AndroidViewModel {
 
     private final AuthRepository authRepository;
-    private final MutableLiveData<Boolean> loginResult = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> registerResult = new MutableLiveData<>();
+
+    private final MutableLiveData<Boolean> otpSent = new MutableLiveData<>(false);
+    private final MutableLiveData<User> loggedInUser = new MutableLiveData<>();
+    private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
-        authRepository = new AuthRepository(application);
+        this.authRepository = new AuthRepository(application);
     }
 
-    public LiveData<Boolean> getLoginResult() {
-        return loginResult;
+    public LiveData<Boolean> getOtpSent() { return otpSent; }
+    public LiveData<User> getLoggedInUser() { return loggedInUser; }
+    public LiveData<String> getErrorMessage() { return errorMessage; }
+    public LiveData<Boolean> getLoading() { return loading; }
+
+    public void sendOtp(String phoneNumber) {
+        loading.setValue(true);
+        authRepository.requestOtp(phoneNumber, new AuthRepository.AuthCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                loading.postValue(false);
+                otpSent.postValue(true);
+            }
+
+            @Override
+            public void onError(String message) {
+                loading.postValue(false);
+                errorMessage.postValue(message);
+            }
+        });
     }
 
-    public LiveData<Boolean> getRegisterResult() {
-        return registerResult;
-    }
+    public void verifyOtp(String phoneNumber, String otpCode) {
+        loading.setValue(true);
+        authRepository.verifyOtp(phoneNumber, otpCode, new AuthRepository.AuthCallback<User>() {
+            @Override
+            public void onSuccess(User result) {
+                loading.postValue(false);
+                loggedInUser.postValue(result);
+            }
 
-    public void login(String email, String password) {
-        boolean success = authRepository.login(email, password);
-        loginResult.setValue(success);
-    }
-
-    public void register(String name, String email, String phone, String password) {
-        User user = new User(0, name, email, phone, password, "");
-        boolean success = authRepository.register(user);
-        registerResult.setValue(success);
+            @Override
+            public void onError(String message) {
+                loading.postValue(false);
+                errorMessage.postValue(message);
+            }
+        });
     }
 
     public boolean isLoggedIn() {
         return authRepository.isLoggedIn();
-    }
-
-    public void logout() {
-        authRepository.logout();
     }
 }

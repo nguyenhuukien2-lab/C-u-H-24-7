@@ -2,6 +2,7 @@ package com.example.roadside.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,6 +26,14 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvRegister = findViewById(R.id.tvRegister);
 
         btnLogin.setOnClickListener(v -> {
+            String email = etEmail.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();

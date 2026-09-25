@@ -1,54 +1,65 @@
 package com.example.roadside.data.models;
 
+import java.util.List;
+
 public class Provider {
-    private int id;
+    private String id;
     private String name;
-    private String phone;
-    private double rating;
-    private double latitude;
-    private double longitude;
-    private String vehicleType;
-    private boolean available;
-    private double distance;
+    private String photoUrl;
+    private float rating;
+    private int ratingCount;
+    private double distanceKm;
+    private int etaMinutes;
+    private double priceEstimate;
+    private boolean verified;
+    private List<String> capabilities;
+    private String vehiclePlate;
+    private String phone = "19006868";
 
-    public Provider() {}
+    public Provider() { }
 
-    public Provider(int id, String name, String phone, double rating, double latitude, double longitude, String vehicleType, boolean available, double distance) {
-        this.id = id;
+    public Provider(int id, String name, String phone, double rating, double distance) {
+        this.id = String.valueOf(id);
         this.name = name;
         this.phone = phone;
-        this.rating = rating;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.vehicleType = vehicleType;
-        this.available = available;
-        this.distance = distance;
+        this.rating = (float) rating;
+        this.distanceKm = distance;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+
+    public float getRating() { return rating; }
+    public void setRating(float rating) { this.rating = rating; }
+
+    public int getRatingCount() { return ratingCount; }
+    public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }
+
+    public double getDistanceKm() { return distanceKm; }
+    public void setDistanceKm(double distanceKm) { this.distanceKm = distanceKm; }
+    public double getDistance() { return distanceKm; }
+
+    public int getEtaMinutes() { return etaMinutes; }
+    public void setEtaMinutes(int etaMinutes) { this.etaMinutes = etaMinutes; }
+
+    public double getPriceEstimate() { return priceEstimate; }
+    public void setPriceEstimate(double priceEstimate) { this.priceEstimate = priceEstimate; }
+
+    public boolean isVerified() { return verified; }
+    public void setVerified(boolean verified) { this.verified = verified; }
+
+    public List<String> getCapabilities() { return capabilities; }
+    public void setCapabilities(List<String> capabilities) { this.capabilities = capabilities; }
+
+    public String getVehiclePlate() { return vehiclePlate; }
+    public void setVehiclePlate(String vehiclePlate) { this.vehiclePlate = vehiclePlate; }
+
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-
-    public double getRating() { return rating; }
-    public void setRating(double rating) { this.rating = rating; }
-
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude; }
-
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude; }
-
-    public String getVehicleType() { return vehicleType; }
-    public void setVehicleType(String vehicleType) { this.vehicleType = vehicleType; }
-
-    public boolean isAvailable() { return available; }
-    public void setAvailable(boolean available) { this.available = available; }
-
-    public double getDistance() { return distance; }
-    public void setDistance(double distance) { this.distance = distance; }
 }

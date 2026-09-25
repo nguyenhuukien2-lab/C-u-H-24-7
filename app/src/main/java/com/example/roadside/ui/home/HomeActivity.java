@@ -1,44 +1,53 @@
 package com.example.roadside.ui.home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.roadside.R;
-import com.example.roadside.ui.history.HistoryActivity;
 import com.example.roadside.ui.request.RequestFormActivity;
+import com.example.roadside.utils.Constants;
 
+/** Home / SOS dashboard; matches activity_home.xml. */
 public class HomeActivity extends AppCompatActivity {
+
+    private HomeViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        ImageButton btnRescueNow = findViewById(R.id.btnRescueNow);
-        TextView btnHotline = findViewById(R.id.btnHotline);
-        View navHistory = findViewById(R.id.navHistory);
-        View navAccount = findViewById(R.id.navAccount);
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        if (btnRescueNow != null) {
-            btnRescueNow.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, RequestFormActivity.class)));
-        }
+        findViewById(R.id.btnRescueNow).setOnClickListener(v -> startRequestFlow());
+        findViewById(R.id.btnHotline).setOnClickListener(v -> callHotline());
+        findViewById(R.id.btnChangeLocation).setOnClickListener(v -> viewModel.refreshLocation());
 
-        if (btnHotline != null) {
-            btnHotline.setOnClickListener(v -> Toast.makeText(this, "Đang gọi tổng đài cứu hộ: 1900 6868", Toast.LENGTH_SHORT).show());
-        }
+        TextView tvLocation = findViewById(R.id.tvCurrentLocation);
+        viewModel.getAddressLine().observe(this, tvLocation::setText);
 
-        if (navHistory != null) {
-            navHistory.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, HistoryActivity.class)));
-        }
+        viewModel.refreshLocation();
 
-        if (navAccount != null) {
-            navAccount.setOnClickListener(v -> Toast.makeText(this, "Thông tin tài khoản", Toast.LENGTH_SHORT).show());
-        }
+        bindBottomNav();
+    }
+
+    private void startRequestFlow() {
+        startActivity(new Intent(this, RequestFormActivity.class));
+    }
+
+    private void callHotline() {
+        Intent dial = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Constants.HOTLINE_NUMBER));
+        startActivity(dial);
+    }
+
+    private void bindBottomNav() {
+        // The included bottom_nav_bar / item_nav_tab views are wired up here
+        // (icons, labels, click -> Activity navigation) once the other
+        // bottom-nav destinations are finalized.
     }
 }

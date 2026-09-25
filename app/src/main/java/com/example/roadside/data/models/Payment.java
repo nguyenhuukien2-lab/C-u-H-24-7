@@ -1,44 +1,49 @@
 package com.example.roadside.data.models;
 
 public class Payment {
-    private int id;
-    private int requestId;
-    private double amount;
-    private String paymentMethod;
-    private String paymentStatus;
-    private String transactionId;
-    private String timestamp;
 
-    public Payment() {}
+    public enum Method { MOMO, VNPAY, CARD, CASH }
 
-    public Payment(int id, int requestId, double amount, String paymentMethod, String paymentStatus, String transactionId, String timestamp) {
-        this.id = id;
-        this.requestId = requestId;
-        this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.paymentStatus = paymentStatus;
-        this.transactionId = transactionId;
-        this.timestamp = timestamp;
-    }
+    private String id;
+    private String requestId;
+    private double baseFee;
+    private double partsFee;
+    private double surcharge;
+    private double discount;
+    private double totalAmount;
+    private Method method;
+    private boolean confirmed;
+    private String invoiceEmail;
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Payment() { }
 
-    public int getRequestId() { return requestId; }
-    public void setRequestId(int requestId) { this.requestId = requestId; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public String getRequestId() { return requestId; }
+    public void setRequestId(String requestId) { this.requestId = requestId; }
 
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public double getBaseFee() { return baseFee; }
+    public void setBaseFee(double baseFee) { this.baseFee = baseFee; }
 
-    public String getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
+    public double getPartsFee() { return partsFee; }
+    public void setPartsFee(double partsFee) { this.partsFee = partsFee; }
 
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    public double getSurcharge() { return surcharge; }
+    public void setSurcharge(double surcharge) { this.surcharge = surcharge; }
 
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public double getDiscount() { return discount; }
+    public void setDiscount(double discount) { this.discount = discount; }
+
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+
+    public Method getMethod() { return method; }
+    public void setMethod(Method method) { this.method = method; }
+
+    public boolean isConfirmed() { return confirmed; }
+    public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
+
+    public String getInvoiceEmail() { return invoiceEmail; }
+    public void setInvoiceEmail(String invoiceEmail) { this.invoiceEmail = invoiceEmail; }
 }

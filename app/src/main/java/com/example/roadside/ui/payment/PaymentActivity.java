@@ -1,9 +1,6 @@
 package com.example.roadside.ui.payment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,47 +9,66 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.roadside.R;
-import com.example.roadside.ui.home.HomeActivity;
+import com.example.roadside.data.models.Payment;
+import com.example.roadside.utils.Constants;
 import com.example.roadside.utils.PaymentHelper;
 
+/** Cost breakdown + payment-method confirmation; matches activity_payment.xml. */
 public class PaymentActivity extends AppCompatActivity {
+
+    private PaymentViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
-        int requestId = getIntent().getIntExtra("request_id", 1);
-        double amount = getIntent().getDoubleExtra("amount", 170000.0);
+        String requestId = getIntent().getStringExtra(Constants.EXTRA_REQUEST_ID);
+        viewModel = new ViewModelProvider(this).get(PaymentViewModel.class);
 
-        TextView tvTotalAmount = findViewById(R.id.tvTotalAmount);
-        RadioGroup rgPaymentMethod = findViewById(R.id.rgPaymentMethod);
-        Button btnConfirmPayment = findViewById(R.id.btnConfirmPayment);
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        bindPaymentMethods();
 
-        if (tvTotalAmount != null) {
-            tvTotalAmount.setText(PaymentHelper.formatCurrency(amount));
-        }
+        findViewById(R.id.btnConfirmPayment).setOnClickListener(v -> viewModel.confirmPayment());
 
-        PaymentViewModel viewModel = new ViewModelProvider(this).get(PaymentViewModel.class);
+        observeViewModel();
+        // TODO: load the real Payment for requestId via PaymentRepository and
+        // push it into the ViewModel instead of relying on the static preview.
+    }
 
-        if (btnConfirmPayment != null) {
-            btnConfirmPayment.setOnClickListener(v -> {
-                String method = "Tiền mặt";
-                if (rgPaymentMethod != null) {
-                    int selectedId = rgPaymentMethod.getCheckedRadioButtonId();
-                    RadioButton selectedRb = findViewById(selectedId);
-                    if (selectedRb != null) {
-                        method = selectedRb.getText().toString();
-                    }
-                }
+    private void bindPaymentMethods() {
+        findViewById(R.id.methodMomo).setOnClickListener(v -> selectMethod(Payment.Method.MOMO));
+        findViewById(R.id.methodVnpay).setOnClickListener(v -> selectMethod(Payment.Method.VNPAY));
+        findViewById(R.id.methodCard).setOnClickListener(v -> selectMethod(Payment.Method.CARD));
+        findViewById(R.id.methodCash).setOnClickListener(v -> selectMethod(Payment.Method.CASH));
+    }
 
-                viewModel.processPayment(requestId, amount, method);
-                Toast.makeText(this, "Thanh toán thành công qua " + method, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(PaymentActivity.this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+    private void selectMethod(Payment.Method method) {
+        viewModel.selectMethod(method);
+        findViewById(R.id.methodMomo).setSelected(method == Payment.Method.MOMO);
+        findViewById(R.id.methodVnpay).setSelected(method == Payment.Method.VNPAY);
+        findViewById(R.id.methodCard).setSelected(method == Payment.Method.CARD);
+        findViewById(R.id.methodCash).setSelected(method == Payment.Method.CASH);
+    }
+
+    private void observeViewModel() {
+        viewModel.getPayment().observe(this, payment -> {
+            if (payment == null) return;
+            TextView tvTotal = findViewById(R.id.tvTotalAmount);
+            tvTotal.setText(PaymentHelper.formatVnd(PaymentHelper.calculateTotal(payment)));
+        });
+
+        viewModel.getConfirmed().observe(this, confirmed -> {
+            if (Boolean.TRUE.equals(confirmed)) {
+                Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
                 finish();
-            });
-        }
+            }
+        });
+
+        viewModel.getErrorMessage().observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -11,68 +11,76 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.roadside.R;
 import com.example.roadside.data.models.Provider;
-import com.example.roadside.utils.LocationHelper;
+import com.example.roadside.utils.PaymentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.ViewHolder> {
+/** Binds Provider list to item_provider.xml rows in ProviderListActivity. */
+public class ProviderAdapter extends RecyclerView.Adapter<ProviderAdapter.ProviderViewHolder> {
 
-    public interface OnProviderClickListener {
-        void onProviderClick(Provider provider);
+    public interface OnProviderChosenListener {
+        void onProviderChosen(Provider provider);
     }
 
-    private List<Provider> providerList = new ArrayList<>();
-    private final OnProviderClickListener listener;
+    private final List<Provider> providers = new ArrayList<>();
+    private final OnProviderChosenListener listener;
 
-    public ProviderAdapter(OnProviderClickListener listener) {
+    public ProviderAdapter(OnProviderChosenListener listener) {
         this.listener = listener;
     }
 
-    public void setProviders(List<Provider> providers) {
-        this.providerList = providers != null ? providers : new ArrayList<>();
+    public void submitList(List<Provider> newProviders) {
+        providers.clear();
+        if (newProviders != null) {
+            providers.addAll(newProviders);
+        }
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_provider, parent, false);
-        return new ViewHolder(view);
+    public ProviderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_provider, parent, false);
+        return new ProviderViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Provider provider = providerList.get(position);
+    public void onBindViewHolder(@NonNull ProviderViewHolder holder, int position) {
+        Provider provider = providers.get(position);
         holder.tvName.setText(provider.getName());
-        holder.tvRating.setText("⭐ " + provider.getRating() + " (Đánh giá) • Chuyên nghiệp");
-        holder.tvDistance.setText("🚗 " + LocationHelper.formatDistance(provider.getDistance()));
-        if (holder.tvPrice != null) {
-            holder.tvPrice.setText("350.000 VNĐ");
-        }
-        holder.btnSelect.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onProviderClick(provider);
-            }
+        holder.tvRatingMeta.setText(String.format("⭐ %.1f (%d đánh giá)",
+                provider.getRating(), provider.getRatingCount()));
+        holder.tvDistance.setText(String.format("🚗 %.1f km", provider.getDistanceKm()));
+        holder.tvEta.setText(String.format("⏱ %d phút tới", provider.getEtaMinutes()));
+        holder.tvPrice.setText(PaymentHelper.formatVnd(provider.getPriceEstimate()));
+        holder.btnChoose.setOnClickListener(v -> {
+            if (listener != null) listener.onProviderChosen(provider);
         });
     }
 
     @Override
     public int getItemCount() {
-        return providerList.size();
+        return providers.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvRating, tvDistance, tvPrice;
-        Button btnSelect;
+    static class ProviderViewHolder extends RecyclerView.ViewHolder {
+        final TextView tvName;
+        final TextView tvRatingMeta;
+        final TextView tvDistance;
+        final TextView tvEta;
+        final TextView tvPrice;
+        final Button btnChoose;
 
-        public ViewHolder(@NonNull View itemView) {
+        ProviderViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvProviderName);
-            tvRating = itemView.findViewById(R.id.tvProviderRatingMeta);
+            tvRatingMeta = itemView.findViewById(R.id.tvProviderRatingMeta);
             tvDistance = itemView.findViewById(R.id.tvProviderDistance);
+            tvEta = itemView.findViewById(R.id.tvProviderEta);
             tvPrice = itemView.findViewById(R.id.tvProviderPrice);
-            btnSelect = itemView.findViewById(R.id.btnChooseProvider);
+            btnChoose = itemView.findViewById(R.id.btnChooseProvider);
         }
     }
 }
