@@ -1,6 +1,7 @@
 package com.example.roadside.utils;
 
 public class Constants {
+    public static final boolean DEBUG = true;
     public static final String BASE_URL = "https://api.roadside.example.com/";
     public static final String PREF_NAME = "roadside_prefs";
     public static final String KEY_USER_ID = "user_id";
