@@ -42,7 +42,7 @@ class CuuHoApp extends StatelessWidget {
           color: const Color(0xFF0F172A),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
+              constraints: const BoxConstraints(maxWidth: 450),
               child: child,
             ),
           ),
