@@ -37,6 +37,19 @@ class CuuHoApp extends StatelessWidget {
           centerTitle: true,
         ),
       ),
+      builder: (context, child) {
+        return Container(
+          color: const Color(0xFF0F172A),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: ClipRRect(
+                child: child,
+              ),
+            ),
+          ),
+        );
+      },
       initialRoute: '/home',
       routes: {
         '/login': (context) => const LoginScreen(),
