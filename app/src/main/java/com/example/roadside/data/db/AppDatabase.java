@@ -9,26 +9,32 @@ import androidx.room.RoomDatabase;
 import com.example.roadside.data.models.Request;
 import com.example.roadside.data.models.User;
 
+/**
+ * Local Room cache used for offline history browsing and resuming an
+ * in-progress request after the app is killed/restarted.
+ */
 @Database(entities = {User.class, Request.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static volatile AppDatabase INSTANCE;
+    private static volatile AppDatabase instance;
 
     public abstract UserDao userDao();
+
     public abstract RequestDao requestDao();
 
     public static AppDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
+        if (instance == null) {
             synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            AppDatabase.class,
-                            "roadside_db"
-                    ).allowMainThreadQueries().build();
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                                    context.getApplicationContext(),
+                                    AppDatabase.class,
+                                    "resq247.db")
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }
-        return INSTANCE;
+        return instance;
     }
 }
