@@ -41,52 +41,9 @@ class CuuHoApp extends StatelessWidget {
         return Container(
           color: const Color(0xFF0F172A),
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 430),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F7FA),
-                    borderRadius: BorderRadius.circular(32),
-                    border: Border.all(color: Colors.white24, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
-                        blurRadius: 30,
-                        spreadRadius: 4,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Stack(
-                      children: [
-                        child!,
-                        // Dynamic Island Notch
-                        Positioned(
-                          top: 8,
-                          left: 0,
-                          right: 0,
-                          child: IgnorePointer(
-                            child: Center(
-                              child: Container(
-                                width: 90,
-                                height: 18,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: child,
             ),
           ),
         );
