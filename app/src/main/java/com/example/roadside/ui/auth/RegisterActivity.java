@@ -1,36 +1,77 @@
 package com.example.roadside.ui.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.roadside.R;
+import com.example.roadside.data.models.User;
+import com.example.roadside.data.repository.AuthRepository;
+import com.example.roadside.ui.home.HomeActivity;
 
-/**
- * OTP-verification / profile-completion step shown after LoginActivity
- * sends an OTP. Reuses AuthViewModel.verifyOtp(phone, code).
- */
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PHONE_NUMBER = "extra_phone_number";
-
-    private AuthViewModel viewModel;
+    private AuthRepository authRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Reuses activity_login.xml's phone-entry chrome; swap in a dedicated
-        // OTP-code layout (e.g. activity_otp_verify.xml) when ready.
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
-        viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        authRepository = new AuthRepository(this);
 
-        viewModel.getErrorMessage().observe(this, message -> {
-            if (message != null) {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        EditText etFullName = findViewById(R.id.etFullName);
+        EditText etEmail = findViewById(R.id.etEmail);
+        EditText etPhone = findViewById(R.id.etPhone);
+        EditText etPassword = findViewById(R.id.etPassword);
+        EditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
+        Button btnRegister = findViewById(R.id.btnRegister);
+        TextView tvLogin = findViewById(R.id.tvLogin);
+
+        btnRegister.setOnClickListener(v -> {
+            String name = etFullName.getText().toString().trim();
+            String email = etEmail.getText().toString().trim();
+            String phone = etPhone.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+            String confirmPassword = etConfirmPassword.getText().toString().trim();
+
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(password)) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            User user = new User();
+            user.setFullName(name);
+            user.setEmail(email);
+            user.setPhoneNumber(phone);
+            user.setPassword(password);
+
+            authRepository.register(user, new AuthRepository.AuthCallback<User>() {
+                @Override
+                public void onSuccess(User result) {
+                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
+        tvLogin.setOnClickListener(v -> finish());
     }
 }

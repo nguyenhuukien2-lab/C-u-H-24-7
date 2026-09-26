@@ -5,6 +5,7 @@ import com.example.roadside.data.models.Provider;
 import com.example.roadside.data.models.Rating;
 import com.example.roadside.data.models.Request;
 import com.example.roadside.data.models.User;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -25,6 +26,12 @@ public interface ApiService {
 
     @POST("auth/otp/verify")
     Call<User> verifyOtp(@Body String otpPayloadJson);
+
+    @POST("auth/login")
+    Call<User> login(@Body JsonObject credentials);
+
+    @POST("auth/register")
+    Call<User> register(@Body User user);
 
     // --- Requests ---
     @POST("requests")

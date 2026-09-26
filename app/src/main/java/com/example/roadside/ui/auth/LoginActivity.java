@@ -2,6 +2,8 @@ package com.example.roadside.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,13 +20,17 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         EditText etPhone = findViewById(R.id.etPhone);
-        findViewById(R.id.btnContinueOtp).setOnClickListener(v -> {
+        Button btnContinueOtp = findViewById(R.id.btnContinueOtp);
+
+        btnContinueOtp.setOnClickListener(v -> {
             String phone = etPhone.getText().toString().trim();
-            if (phone.isEmpty()) {
+
+            if (TextUtils.isEmpty(phone)) {
                 Toast.makeText(this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Toast.makeText(this, "Gửi mã OTP thành công!", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         });

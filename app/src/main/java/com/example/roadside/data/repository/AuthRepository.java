@@ -13,7 +13,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/** Handles user registration, OTP login, and session persistence. */
+/** Handles authentication (OTP and password) and session persistence. */
 public class AuthRepository {
 
     public interface AuthCallback<T> {
@@ -61,17 +61,63 @@ public class AuthRepository {
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
-                    // Save session in SharedPreferences
                     prefs.saveUserId(user.getId());
                     prefs.savePhoneNumber(user.getPhoneNumber());
                     prefs.saveUserSession(user.getId(), user.getEmail(), user.getFullName());
-
-                    // Save user in Room DB cache
                     new Thread(() -> database.userDao().insert(user)).start();
-
                     callback.onSuccess(user);
                 } else {
                     callback.onError("Mã OTP không chính xác.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+
+    public void login(String email, String password, AuthCallback<User> callback) {
+        JsonObject json = new JsonObject();
+        json.addProperty("email", email);
+        json.addProperty("password", password);
+
+        apiService.login(json).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    prefs.saveUserId(user.getId());
+                    prefs.savePhoneNumber(user.getPhoneNumber());
+                    prefs.saveUserSession(user.getId(), user.getEmail(), user.getFullName());
+                    new Thread(() -> database.userDao().insert(user)).start();
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("Email hoặc mật khẩu không chính xác.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+
+    public void register(User newUser, AuthCallback<User> callback) {
+        apiService.register(newUser).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User user = response.body();
+                    prefs.saveUserId(user.getId());
+                    prefs.savePhoneNumber(user.getPhoneNumber());
+                    prefs.saveUserSession(user.getId(), user.getEmail(), user.getFullName());
+                    new Thread(() -> database.userDao().insert(user)).start();
+                    callback.onSuccess(user);
+                } else {
+                    callback.onError("Đăng ký thất bại. Email có thể đã tồn tại.");
                 }
             }
 
