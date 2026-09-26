@@ -19,6 +19,19 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
+                        onPressed: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          }
+                        },
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      const SizedBox(width: 8),
                       const Icon(Icons.car_crash, color: Color(0xFFC1121F), size: 28),
                       const SizedBox(width: 8),
                       Column(
