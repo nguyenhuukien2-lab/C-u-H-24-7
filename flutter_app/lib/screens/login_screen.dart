@@ -1,195 +1,168 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _phoneController = TextEditingController(text: '0912345678');
-  final _passwordController = TextEditingController(text: 'password123');
-  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F7FA),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Top Bar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.car_crash, color: Color(0xFFC1121F), size: 28),
+                      const SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text('Cứu Hộ 247', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1A1A1A))),
+                          Text('ResQ247 SOS Dispatch', style: TextStyle(fontSize: 10, color: Color(0xFFC1121F), fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC1121F),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.phone, color: Colors.white, size: 14),
+                        SizedBox(width: 4),
+                        Text('1900 6868', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               // Emergency Banner
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFEBEE),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFEF9A9A)),
+                  color: const Color(0xFFFBE4DC),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber_rounded, color: Color(0xFFE53935), size: 32),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(color: Color(0xFFC1121F), shape: BoxShape.circle),
+                      child: const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 24),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
-                          Text(
-                            'CỨU HỘ KHẨN CẤP 24/7',
-                            style: TextStyle(
-                              color: Color(0xFFC62828),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Hỗ trợ kéo xe, vá vỏ, kích bình mọi lúc mọi nơi.',
-                            style: TextStyle(color: Color(0xFF555555), fontSize: 12),
-                          ),
+                          Text('TRỢ GIÚP KHẨN CẤP 24/7', style: TextStyle(color: Color(0xFFC1121F), fontWeight: FontWeight.bold, fontSize: 11)),
+                          Text('Gọi tổng đài: 1900 6868', style: TextStyle(color: Color(0xFF1A1A1A), fontWeight: FontWeight.bold, fontSize: 15)),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // App Logo / Title
-              Center(
-                child: Column(
-                  children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE53935).withOpacity(0.1),
-                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      child: const Icon(Icons.local_shipping_rounded, size: 56, color: Color(0xFFE53935)),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'CỨU HỘ 247',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A202C),
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'ResQ247 - Đồng hành mọi nẻo đường',
-                      style: TextStyle(fontSize: 14, color: Color(0xFF718096)),
+                      child: const Text('Miễn phí', style: TextStyle(color: Color(0xFFC1121F), fontWeight: FontWeight.bold, fontSize: 11)),
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(height: 40),
-
-              // Form Inputs
-              TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: 'Số điện thoại / Email',
-                  prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF1E88E5)),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  filled: true,
-                  fillColor: Colors.white,
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                obscureText: _obscurePassword,
-                decoration: InputDecoration(
-                  labelText: 'Mật khẩu',
-                  prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF1E88E5)),
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+
+              // Login Card
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Đăng nhập hoặc Tạo tài khoản', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+                      const SizedBox(height: 4),
+                      const Text('Nhập số điện thoại để kết nối đội cứu hộ gần nhất', style: TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
+                      const SizedBox(height: 20),
+
+                      const Text('Số điện thoại di động', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1A1A1A))),
+                      const SizedBox(height: 8),
+
+                      Container(
+                        height: 52,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF7F7FA),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFEDEDED)),
+                        ),
+                        child: Row(
+                          children: const [
+                            Text('🇻🇳 +84', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+                            SizedBox(width: 12),
+                            Container(width: 1, height: 24, color: Color(0xFFEDEDED)),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '0912 345 678',
+                                  hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFC1121F),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                          ),
+                          child: const Text('Tiếp tục / Gửi mã OTP', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      const Center(child: Text('CHỌN NHANH ĐẦU SỐ NHÀ MẠNG', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280), fontWeight: FontWeight.bold))),
+                      const SizedBox(height: 8),
+
+                      Row(
+                        children: const [
+                          Expanded(child: _PrefixChip(text: '098')),
+                          SizedBox(width: 6),
+                          Expanded(child: _PrefixChip(text: '090')),
+                          SizedBox(width: 6),
+                          Expanded(child: _PrefixChip(text: '091')),
+                          SizedBox(width: 6),
+                          Expanded(child: _PrefixChip(text: '077')),
+                        ],
+                      ),
+                    ],
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  filled: true,
-                  fillColor: Colors.white,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text('Quên mật khẩu?', style: TextStyle(color: Color(0xFF1E88E5))),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Login Button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE53935),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  elevation: 2,
-                ),
-                child: const Text(
-                  'ĐĂNG NHẬP',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Divider
-              Row(
-                children: const [
-                  Expanded(child: Divider(color: Color(0xFFCBD5E0))),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('Hoặc đăng nhập với', style: TextStyle(color: Color(0xFF718096), fontSize: 13)),
-                  ),
-                  Expanded(child: Divider(color: Color(0xFFCBD5E0))),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Social Logins
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _socialButton(Icons.g_mobiledata, 'Google', () => Navigator.pushReplacementNamed(context, '/home')),
-                  const SizedBox(width: 16),
-                  _socialButton(Icons.apple, 'Apple', () => Navigator.pushReplacementNamed(context, '/home')),
-                  const SizedBox(width: 16),
-                  _socialButton(Icons.facebook, 'Facebook', () => Navigator.pushReplacementNamed(context, '/home')),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Register prompt
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Chưa có tài khoản? ', style: TextStyle(color: Color(0xFF718096))),
-                  GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Chức năng đăng ký đang phát triển')),
-                      );
-                    },
-                    child: const Text(
-                      'Đăng ký ngay',
-                      style: TextStyle(color: Color(0xFFE53935), fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -197,17 +170,22 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
 
-  Widget _socialButton(IconData icon, String label, VoidCallback onTap) {
-    return OutlinedButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, color: const Color(0xFF2D3748)),
-      label: Text(label, style: const TextStyle(color: Color(0xFF2D3748))),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        side: const BorderSide(color: Color(0xFFE2E8F0)),
+class _PrefixChip extends StatelessWidget {
+  final String text;
+  const _PrefixChip({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEF0FA),
+        borderRadius: BorderRadius.circular(10),
       ),
+      alignment: Alignment.center,
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1A1A1A))),
     );
   }
 }
