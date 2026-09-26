@@ -37,6 +37,15 @@ public class SharedPrefsHelper {
         return prefs.getString(Constants.KEY_PHONE_NUMBER, null);
     }
 
+    public void saveUserSession(String userId, String email, String name) {
+        prefs.edit()
+                .putString(Constants.KEY_USER_ID, userId)
+                .putString(Constants.KEY_USER_EMAIL, email != null ? email : "")
+                .putString(Constants.KEY_USER_NAME, name != null ? name : "Khách hàng")
+                .putString(Constants.KEY_AUTH_TOKEN, "supabase_jwt_active")
+                .apply();
+    }
+
     public boolean isLoggedIn() {
         return getAuthToken() != null;
     }

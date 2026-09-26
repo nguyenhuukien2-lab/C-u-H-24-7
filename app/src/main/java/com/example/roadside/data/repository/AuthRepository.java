@@ -7,12 +7,13 @@ import com.example.roadside.data.api.ApiService;
 import com.example.roadside.data.db.AppDatabase;
 import com.example.roadside.data.models.User;
 import com.example.roadside.utils.SharedPrefsHelper;
+import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/** Handles OTP login/registration and session persistence for LoginActivity / AuthViewModel. */
+/** Handles user registration, OTP login, and session persistence. */
 public class AuthRepository {
 
     public interface AuthCallback<T> {
@@ -30,9 +31,10 @@ public class AuthRepository {
         this.prefs = new SharedPrefsHelper(context);
     }
 
-    public void requestOtp(String phoneNumber, AuthCallback<Void> callback) {
-        String body = "{\"phoneNumber\":\"" + phoneNumber + "\"}";
-        apiService.requestOtp(body).enqueue(new Callback<Void>() {
+    public void requestOtp(String phone, AuthCallback<Void> callback) {
+        JsonObject json = new JsonObject();
+        json.addProperty("phone", phone);
+        apiService.requestOtp(json.toString()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -49,16 +51,24 @@ public class AuthRepository {
         });
     }
 
-    public void verifyOtp(String phoneNumber, String otpCode, AuthCallback<User> callback) {
-        String body = "{\"phoneNumber\":\"" + phoneNumber + "\",\"otp\":\"" + otpCode + "\"}";
-        apiService.verifyOtp(body).enqueue(new Callback<User>() {
+    public void verifyOtp(String phone, String otpCode, AuthCallback<User> callback) {
+        JsonObject json = new JsonObject();
+        json.addProperty("phone", phone);
+        json.addProperty("otp", otpCode);
+
+        apiService.verifyOtp(json.toString()).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
+                    // Save session in SharedPreferences
                     prefs.saveUserId(user.getId());
                     prefs.savePhoneNumber(user.getPhoneNumber());
+                    prefs.saveUserSession(user.getId(), user.getEmail(), user.getFullName());
+
+                    // Save user in Room DB cache
                     new Thread(() -> database.userDao().insert(user)).start();
+
                     callback.onSuccess(user);
                 } else {
                     callback.onError("Mã OTP không chính xác.");
