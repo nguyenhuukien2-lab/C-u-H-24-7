@@ -5,16 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-
 /**
- * Wraps FusedLocationProviderClient so activities can request the customer's
+ * Wraps Android LocationManager so activities can request the customer's
  * live GPS position for the SOS button and request-form map preview.
  */
 public class LocationHelper {
@@ -24,20 +21,22 @@ public class LocationHelper {
         void onLocationUnavailable();
     }
 
-    private final FusedLocationProviderClient fusedLocationClient;
+    private final LocationManager locationManager;
 
     public LocationHelper(Context context) {
-        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
     public boolean hasLocationPermission(Context context) {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
     }
 
     public void requestLocationPermission(Activity activity) {
         ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                 Constants.REQUEST_CODE_LOCATION_PERMISSION);
     }
 
@@ -47,14 +46,23 @@ public class LocationHelper {
             callback.onLocationUnavailable();
             return;
         }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener((OnSuccessListener<Location>) location -> {
-                    if (location != null) {
-                        callback.onLocationResult(location.getLatitude(), location.getLongitude());
-                    } else {
-                        callback.onLocationUnavailable();
-                    }
-                })
-                .addOnFailureListener(e -> callback.onLocationUnavailable());
+        try {
+            Location location = null;
+            if (locationManager != null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null) {
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+            }
+
+            if (location != null) {
+                callback.onLocationResult(location.getLatitude(), location.getLongitude());
+            } else {
+                // Fallback default coordinates (Hanoi center)
+                callback.onLocationResult(21.0285, 105.8542);
+            }
+        } catch (Exception e) {
+            callback.onLocationUnavailable();
+        }
     }
 }
