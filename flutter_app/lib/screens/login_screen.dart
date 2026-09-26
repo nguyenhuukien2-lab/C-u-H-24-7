@@ -112,15 +112,15 @@ class LoginScreen extends StatelessWidget {
                           border: Border.all(color: const Color(0xFFEDEDED)),
                         ),
                         child: Row(
-                          children: const [
-                            Text('🇻🇳 +84', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
-                            SizedBox(width: 12),
-                            Container(width: 1, height: 24, color: Color(0xFFEDEDED)),
-                            SizedBox(width: 12),
+                          children: [
+                            const Text('🇻🇳 +84', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+                            const SizedBox(width: 12),
+                            Container(width: 1, height: 24, color: const Color(0xFFEDEDED)),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: TextField(
                                 keyboardType: TextInputType.phone,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: '0912 345 678',
                                   hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
