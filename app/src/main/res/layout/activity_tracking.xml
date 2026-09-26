@@ -4,10 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <!-- Top bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,19 +61,11 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <View
+        <fragment
+            android:id="@+id/mapFragmentTracking"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_rounded_dark" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Bản đồ theo dõi hành trình cứu hộ"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_sm"
-            android:textStyle="bold" />
+            android:layout_height="match_parent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,7 +120,6 @@
             android:src="@drawable/ic_my_location" />
     </FrameLayout>
 
-    <!-- Bottom sheet content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -234,11 +223,11 @@
 
             <Button
                 android:id="@+id/btnCallTechnician"
-                style="@style/Button.Primary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_sm"
                 android:layout_weight="1"
+                style="@style/Button.Primary"
                 android:backgroundTint="@color/blue_primary"
                 android:text="@string/btn_call_tech"
                 android:textColor="@color/white" />

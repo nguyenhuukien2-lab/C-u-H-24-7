@@ -2,10 +2,7 @@ package com.example.roadside.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,27 +17,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText etEmail = findViewById(R.id.etEmail);
-        EditText etPassword = findViewById(R.id.etPassword);
-        Button btnLogin = findViewById(R.id.btnLogin);
-        TextView tvRegister = findViewById(R.id.tvRegister);
-
-        btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
-
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+        EditText etPhone = findViewById(R.id.etPhone);
+        findViewById(R.id.btnContinueOtp).setOnClickListener(v -> {
+            String phone = etPhone.getText().toString().trim();
+            if (phone.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Gửi mã OTP thành công!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
-        });
-
-        tvRegister.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
     }
 }

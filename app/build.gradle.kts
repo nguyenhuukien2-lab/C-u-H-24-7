@@ -48,6 +48,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.6.1")
 
     implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)

@@ -95,17 +95,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/flexCapabilities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:orientation="horizontal">
+        android:layout_marginTop="@dimen/spacing_sm">
 
-        <TextView style="@style/MetaPill" android:text="🛞 Xe sàn trượt" />
-        <TextView style="@style/MetaPill" android:layout_marginStart="4dp" android:text="🔧 Lốp tubeless" />
-        <TextView style="@style/MetaPill" android:layout_marginStart="4dp" android:text="🔋 Kích bình" />
-    </LinearLayout>
+        <TextView style="@style/MetaPill" android:text="🛞 Xe sàn trượt hạ gầm" />
+        <TextView style="@style/MetaPill" android:text="🔧 Cứu hộ lốp tubeless" />
+        <TextView style="@style/MetaPill" android:text="🔋 Kích bình 12V/24V" />
+    </com.google.android.flexbox.FlexboxLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -139,9 +138,9 @@
 
         <Button
             android:id="@+id/btnChooseProvider"
-            style="@style/Button.Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Button.Primary"
             android:paddingHorizontal="@dimen/spacing_md"
             android:text="@string/btn_choose_team"
             android:textColor="@color/white" />

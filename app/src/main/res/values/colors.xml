@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_color">#1E88E5</color>
-    <color name="primary_dark">#1565C0</color>
-    <color name="color_accent">#FB8C00</color>
+    <color name="primary_color">#1565C0</color>
+    <color name="primary_dark">#0B1E33</color>
+    <color name="color_accent">#F5A623</color>
 
-    <color name="red">#E53935</color>
-    <color name="blue">#1E88E5</color>
-    <color name="orange">#FB8C00</color>
+    <color name="red">#C1121F</color>
+    <color name="blue">#1565C0</color>
+    <color name="orange">#F5A623</color>
+    <color name="green">#1E8E3E</color>
 
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#1A1A1A</color>
+    <color name="white">#FFFFFF</color>
     <color name="gray_light">#F5F5F5</color>
     <color name="gray">#9E9E9E</color>
     <color name="gray_dark">#424242</color>
-    <color name="green">#4CAF50</color>
 
-    <!-- Additional theme colors for login & emergency layouts -->
-    <color name="background">#F5F7FA</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="text_primary">#1F2937</color>
+    <color name="red_primary">#C1121F</color>
+    <color name="red_dark">#8E0F1A</color>
+    <color name="red_light">#FDECE3</color>
+    <color name="red_soft_bg">#FBE4DC</color>
+
+    <color name="blue_primary">#1565C0</color>
+    <color name="blue_dark">#0B1E33</color>
+    <color name="blue_light">#E8F1FB</color>
+
+    <color name="orange_primary">#F5A623</color>
+    <color name="orange_light">#FFF2DC</color>
+
+    <color name="text_primary">#1A1A1A</color>
     <color name="text_secondary">#6B7280</color>
     <color name="text_hint">#9CA3AF</color>
-    <color name="red_primary">#E53935</color>
-    <color name="red_dark">#C62828</color>
-    <color name="blue_primary">#1E88E5</color>
-    <color name="orange_primary">#FB8C00</color>
-    <color name="success_green">#4CAF50</color>
-    <color name="divider">#E5E7EB</color>
-    <color name="star_gold">#FFC107</color>
-    <color name="chip_bg">#F1F5F9</color>
+    <color name="divider">#EDEDED</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="background">#F7F7FA</color>
+    <color name="chip_bg">#EEF0FA</color>
+
+    <color name="success_green">#1E8E3E</color>
+    <color name="warning_orange">#F5A623</color>
+    <color name="error_red">#C1121F</color>
+    <color name="star_gold">#F5B301</color>
 </resources>

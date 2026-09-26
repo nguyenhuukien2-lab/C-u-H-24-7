@@ -4,10 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <!-- Top bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,7 +114,6 @@
                 <TextView android:id="@+id/tabCancelled" style="@style/HistoryTab" android:text="Đã hủy (1)" />
             </LinearLayout>
 
-            <!-- Pending rating card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,18 +184,18 @@
                     android:textColor="@color/orange_primary"
                     android:textSize="@dimen/text_xs" />
 
-                <LinearLayout
+                <com.google.android.flexbox.FlexboxLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:orientation="horizontal"
-                    android:weightSum="4">
+                    app:flexWrap="wrap"
+                    app:justifyContent="center">
 
-                    <TextView style="@style/IssueChip.Selected" android:layout_width="0dp" android:layout_weight="1" android:text="⚡ Nhanh" />
-                    <TextView style="@style/IssueChip" android:layout_width="0dp" android:layout_weight="1" android:text="🤝 Nhiệt tình" />
-                    <TextView style="@style/IssueChip" android:layout_width="0dp" android:layout_weight="1" android:text="💲 Giá tốt" />
-                    <TextView style="@style/IssueChip" android:layout_width="0dp" android:layout_weight="1" android:text="🔧 Chuẩn" />
-                </LinearLayout>
+                    <TextView style="@style/IssueChip.Selected" android:text="⚡ Đến rất nhanh" />
+                    <TextView style="@style/IssueChip" android:text="🤝 Thái độ nhiệt tình" />
+                    <TextView style="@style/IssueChip" android:text="💲 Giá chuẩn minh bạch" />
+                    <TextView style="@style/IssueChip" android:text="🔧 Kỹ thuật chuẩn xác" />
+                </com.google.android.flexbox.FlexboxLayout>
 
                 <EditText
                     android:id="@+id/etRatingComment"
@@ -225,11 +222,11 @@
 
                 <Button
                     android:id="@+id/btnSubmitRating"
-                    style="@style/Button.Primary"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="@dimen/spacing_md"
-                    android:text="@string/btn_submit_rating"
+                    style="@style/Button.Primary"
+                    android:text="▷ Gửi đánh giá &amp; Hoàn tất"
                     android:textColor="@color/white" />
             </LinearLayout>
 
