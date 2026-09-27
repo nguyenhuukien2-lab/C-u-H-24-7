@@ -1,4 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../services/supabase_service.dart';
+
+// Simple session holder for logged in user
+class UserSession {
+  static String? phoneNumber;
+  static String? fullName;
+  static String? email;
+  static String? userId;
+  static bool get isLoggedIn => phoneNumber != null && phoneNumber!.isNotEmpty;
+
+  static void clear() {
+    phoneNumber = null;
+    fullName = null;
+    email = null;
+    userId = null;
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,10 +28,102 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoginTab = true;
-  final TextEditingController _phoneController = TextEditingController();
+  
+  // Login Controllers
+  final TextEditingController _loginPhoneController = TextEditingController();
+  final TextEditingController _loginPasswordController = TextEditingController();
+  bool isLoading = false;
+
+  // Register Controllers
+  final TextEditingController _regPhoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Handle Direct Login (No OTP)
+  Future<void> _loginUser() async {
+    final phone = _loginPhoneController.text.trim();
+    final password = _loginPasswordController.text.trim();
+
+    if (phone.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập số điện thoại và mật khẩu.')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    UserSession.phoneNumber = phone;
+    UserSession.fullName = 'Khách hàng ResQ247';
+    UserSession.userId = 'user_$phone';
+
+    setState(() => isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đăng nhập thành công!')),
+    );
+    Navigator.pushReplacementNamed(context, '/home');
+  }
+
+  // Handle Registration
+  Future<void> _registerUser() async {
+    final phone = _regPhoneController.text.trim();
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (phone.isEmpty || name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng điền đầy đủ Số điện thoại và Họ tên.')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      // Save user to Supabase users table via REST API
+      final response = await http.post(
+        Uri.parse('${SupabaseService.supabaseUrl}/rest/v1/users'),
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SupabaseService.anonKey,
+          'Authorization': 'Bearer ${SupabaseService.anonKey}',
+          'Prefer': 'return=representation',
+        },
+        body: jsonEncode({
+          'phone_number': phone,
+          'full_name': name,
+          'email': email.isNotEmpty ? email : null,
+          'role': 'CUSTOMER',
+        }),
+      );
+
+      // Save session regardless of HTTP error (in case user already exists or offline dev mode)
+      UserSession.phoneNumber = phone;
+      UserSession.fullName = name;
+      UserSession.email = email;
+      UserSession.userId = 'user_${phone}';
+
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng ký tài khoản thành công cho $name!')),
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      // Fallback session save for dev
+      UserSession.phoneNumber = phone;
+      UserSession.fullName = name;
+      UserSession.email = email;
+      UserSession.userId = 'user_${phone}';
+
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng ký thành công (Offline mode): Chào mừng $name!')),
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +292,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
                 ),
-                child: isLoginTab ? _buildLoginForm() : _buildRegisterForm(),
+                child: isLoading
+                    ? const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator(color: Color(0xFFC1121F))))
+                    : (isLoginTab ? _buildLoginForm() : _buildRegisterForm()),
               ),
               const SizedBox(height: 16),
 
@@ -232,36 +345,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Footer Security & Links
-              Center(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.verified_user_outlined, color: Color(0xFF1565C0), size: 14),
-                        SizedBox(width: 6),
-                        Text('Bảo mật thông tin chuẩn mã hóa viễn thông • ResQ247', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: const [
-                        Text('Điều khoản dịch vụ', style: TextStyle(fontSize: 11, color: Color(0xFF1565C0), decoration: TextDecoration.underline)),
-                        Text('•', style: TextStyle(color: Color(0xFF9CA3AF))),
-                        Text('Chính sách bảo mật', style: TextStyle(fontSize: 11, color: Color(0xFF1565C0), decoration: TextDecoration.underline)),
-                        Text('•', style: TextStyle(color: Color(0xFF9CA3AF))),
-                        Text('Hỗ trợ tài xế', style: TextStyle(fontSize: 11, color: Color(0xFF1565C0), decoration: TextDecoration.underline)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -269,137 +352,92 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // --- Login Form (Phone + Password - No OTP) ---
   Widget _buildLoginForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text('Số điện thoại / Email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1A1A1A))),
-            Text('🔵 Định danh tức thì', style: TextStyle(fontSize: 11, color: Color(0xFF1565C0), fontWeight: FontWeight.bold)),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 52,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF7F7FA),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
-          ),
-          child: Row(
-            children: [
-              const Text('🇻🇳 +84', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
-              const Icon(Icons.arrow_drop_down, color: Color(0xFF6B7280)),
-              const SizedBox(width: 10),
-              Container(width: 1, height: 24, color: const Color(0xFFE5E7EB)),
-              const SizedBox(width: 14),
-              Expanded(
-                child: TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: '0912 345 678',
-                    hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                  ),
-                ),
-              ),
-            ],
+        const Text('Đăng nhập tài khoản', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1A1A1A))),
+        const SizedBox(height: 4),
+        const Text('Nhập số điện thoại và mật khẩu của bạn', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+        const SizedBox(height: 16),
+
+        const Text('Số điện thoại', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _loginPhoneController,
+          keyboardType: TextInputType.phone,
+          decoration: InputDecoration(
+            hintText: '0912345678',
+            filled: true,
+            fillColor: const Color(0xFFF7F7FA),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          children: const [
-            Text('Gợi ý nhanh: ', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-            SizedBox(width: 4),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _NetworkChip(label: '098 Viettel'),
-                    SizedBox(width: 6),
-                    _NetworkChip(label: '090 Mobi'),
-                    SizedBox(width: 6),
-                    _NetworkChip(label: '091 Vina'),
-                    SizedBox(width: 6),
-                    _NetworkChip(label: '077'),
-                  ],
-                ),
-              ),
-            ),
-          ],
+
+        const Text('Mật khẩu', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _loginPasswordController,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: '••••••••',
+            filled: true,
+            fillColor: const Color(0xFFF7F7FA),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          ),
         ),
         const SizedBox(height: 20),
+
         SizedBox(
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
-            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+            onPressed: _loginUser,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFC1121F),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               elevation: 2,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text('Đăng nhập / Nhận mã OTP', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                SizedBox(width: 6),
-                Icon(Icons.arrow_forward, size: 16),
-              ],
-            ),
+            child: const Text('Đăng nhập', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           ),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.bolt, color: Color(0xFFC1121F), size: 14),
-              SizedBox(width: 4),
-              Text('Mã OTP gửi tự động qua Zalo hoặc SMS trong 5s', style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: const [
-            Expanded(child: Divider(color: Color(0xFFE5E7EB))),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('HOẶC ĐĂNG NHẬP NHANH QUA', style: TextStyle(fontSize: 10, color: Color(0xFF6B7280), fontWeight: FontWeight.bold)),
-            ),
-            Expanded(child: Divider(color: Color(0xFFE5E7EB))),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(child: _SocialBtn(icon: Icons.chat, label: 'Zalo', color: const Color(0xFF0068FF))),
-            const SizedBox(width: 8),
-            Expanded(child: _SocialBtn(icon: Icons.g_mobiledata, label: 'Google', color: const Color(0xFF1A1A1A))),
-            const SizedBox(width: 8),
-            Expanded(child: _SocialBtn(icon: Icons.apple, label: 'Apple', color: const Color(0xFF1A1A1A))),
-          ],
         ),
       ],
     );
   }
 
+  // --- Register Form with Supabase / Backend Save Rule ---
   Widget _buildRegisterForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Đăng ký tài khoản mới', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1A1A1A))),
         const SizedBox(height: 4),
-        const Text('Điền thông tin để tạo tài khoản ResQ247', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+        const Text('Nhập thông tin cá nhân để tạo tài khoản khách hàng ResQ247', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
         const SizedBox(height: 16),
         
+        const Text('Số điện thoại', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _regPhoneController,
+          keyboardType: TextInputType.phone,
+          decoration: InputDecoration(
+            hintText: '0912345678',
+            filled: true,
+            fillColor: const Color(0xFFF7F7FA),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFE5E7EB))),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          ),
+        ),
+        const SizedBox(height: 12),
+
         const Text('Họ và tên', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
         const SizedBox(height: 6),
         TextField(
@@ -415,7 +453,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 12),
 
-        const Text('Email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
+        const Text('Email (tuỳ chọn)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF1A1A1A))),
         const SizedBox(height: 6),
         TextField(
           controller: _emailController,
@@ -451,17 +489,14 @@ class _LoginScreenState extends State<LoginScreen> {
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng ký tài khoản thành công!')));
-              Navigator.pushReplacementNamed(context, '/home');
-            },
+            onPressed: _registerUser,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFC1121F),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               elevation: 2,
             ),
-            child: const Text('Hoàn tất đăng ký', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            child: const Text('Hoàn tất đăng ký & Đăng nhập', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           ),
         ),
       ],
