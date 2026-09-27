@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
 class RequestFormScreen extends StatefulWidget {
   const RequestFormScreen({super.key});
@@ -356,7 +357,13 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
             _NavItem(icon: Icons.car_crash, label: 'Cứu hộ', badge: '1', isSelected: true, onTap: () {}),
             _NavItem(icon: Icons.radar, label: 'Đang xử lý', onTap: () => Navigator.pushNamed(context, '/tracking')),
             _NavItem(icon: Icons.history, label: 'Lịch sử', onTap: () => Navigator.pushNamed(context, '/history')),
-            _NavItem(icon: Icons.person, label: 'Tài khoản', onTap: () => Navigator.pushNamed(context, '/login')),
+            _NavItem(icon: Icons.person, label: 'Tài khoản', onTap: () {
+              if (UserSession.isLoggedIn) {
+                Navigator.pushNamed(context, '/account');
+              } else {
+                Navigator.pushNamed(context, '/login');
+              }
+            }),
           ],
         ),
       ),

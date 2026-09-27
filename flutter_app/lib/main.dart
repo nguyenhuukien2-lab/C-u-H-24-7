@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/login_screen.dart';
+import 'screens/account_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/request_form_screen.dart';
 import 'screens/provider_list_screen.dart';
@@ -51,6 +52,7 @@ class CuuHoApp extends StatelessWidget {
       initialRoute: '/home',
       routes: {
         '/login': (context) => const LoginScreen(),
+        '/account': (context) => const AccountScreen(),
         '/home': (context) => const HomeScreen(),
         '/request': (context) => const RequestFormScreen(),
         '/providers': (context) => const ProviderListScreen(),
